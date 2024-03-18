@@ -4,6 +4,11 @@ from rest_framework.response import Response
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.exceptions import AuthenticationFailed
 from .models import User
+import jwt, datetime, os
+from dotenv import load_dotenv
+
+# Loading environment variables
+load_dotenv()
 
 class RegisterView(APIView):
     """View for registering the user"""
@@ -28,6 +33,17 @@ class LoginView(APIView):
         if not user.check_password(password):
             raise AuthenticationFailed('Incorrect Password')
         
+        payload = {
+            'id':user.id,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
+            'iat': datetime.datetime.utcnow(),
+        }
+
+        secret = os.getenv('secret_key')
+
+        token = jwt.encode(payload, secret , algorithm='HS256')
+        
         return Response({
-            'message':'Login Successful'
+            'message':'Login Successful',
+            'token': token
         })
