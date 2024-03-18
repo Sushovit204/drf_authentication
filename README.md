@@ -41,7 +41,7 @@ To use the Entity Controller API, follow the instructions below:
 
 3. **Setup the  Virtual Environment:** Create and setup python virtual environmnet
     - Create a virtual environmnet using `py3 -m venv venv`. 
-    -Activate virtual environment using `Source venv/Scripts/activate`.
+    - Activate virtual environment using `Source venv/Scripts/activate`.
 
 4. **Install Dependencies:** Install the project dependencies using `pip install -r requirements.txt`
 
