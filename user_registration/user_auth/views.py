@@ -49,7 +49,6 @@ class LoginView(APIView):
         respose.data = {
             'jwt':token,
         }
-        
         return respose
     
 
@@ -69,3 +68,14 @@ class UserView(APIView):
         user = User.objects.filter(id=payload['id']).first()
         serializer = UserSerializer(user)
         return Response(serializer.data)
+    
+
+class LogoutView(APIView):
+    """view for the user logout"""
+    def post(self, request):
+        response = Response()
+        response.delete_cookie('jwt')
+        response.data = {
+            "message":"Succesfully logout"
+        }
+        return response
