@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 
 # Loading environment variables
 load_dotenv()
+secret = os.getenv('secret_key')
+
 
 class RegisterView(APIView):
     """View for registering the user"""
@@ -39,8 +41,6 @@ class LoginView(APIView):
             'iat': datetime.datetime.utcnow(),
         }
 
-        secret = os.getenv('secret_key')
-
         token = jwt.encode(payload, secret , algorithm='HS256')
 
         respose = Response()
@@ -51,3 +51,21 @@ class LoginView(APIView):
         }
         
         return respose
+    
+
+class UserView(APIView):
+    """view to get user via cookie"""
+    def get(self, request):
+        token = request.COOKIES.get('jwt')
+
+        if not token:
+            raise AuthenticationFailed("Unauthorized Access!")
+        
+        try:
+            payload = jwt.decode(token, secret, algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed("Session Expired!")
+        
+        user = User.objects.filter(id=payload['id']).first()
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
